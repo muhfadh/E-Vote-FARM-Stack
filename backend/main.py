@@ -1,14 +1,9 @@
 from typing import Union
+from urllib import response
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from database import (
-    fetch_one_candidates,
-    fetch_all_candidates,
-    create_candidates, 
-    update_candidates,
-    remove_candidates
-)
-from model import Candidates
+from database import *
+from model import Candidates, Votes
 
 
 app = FastAPI()
@@ -60,4 +55,27 @@ async def delete_candidates(candidate_id: int):
     if response:
         return {"messages": f"Succesfully deleted candidates {candidate_id}"}
     raise HTTPException(404, f"There is no candidate with this candidate id: {candidate_id}")
+    
+
+####################
+@app.post("/api/votes", response_model=Votes)
+async def vote_candidates(votes: Votes):
+    response = await add_vote(votes.dict())
+    if response:
+        return response
+    raise HTTPException(400, f"Something went wrong or bad request :(")
+
+@app.get("/api/votes-count/{candidate_id}")
+async def votes_count(candidate_id: int):
+    response = await count_votes_candidate_id(candidate_id)
+    if response:
+        return {"candidate_id": candidate_id, "votes_count": response}
+    raise HTTPException(404, f"There is no candidate with this candidate id: {candidate_id}")
+
+@app.get("/api/total-votes")
+async def get_total_votes():
+    response = await count_total_votes()
+    if response:
+        return {"total_votes": response}
+    
     

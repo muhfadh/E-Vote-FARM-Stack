@@ -36,6 +36,10 @@ async def get_candidates_by_id(candidate_id: int):
 
 @app.post("/api/candidates", response_model=Candidates)
 async def post_candidates(candidates: Candidates):
+    db_user = await fetch_one_candidates(candidates.candidate_id)
+    if db_user:
+        raise HTTPException(400, f"candidate_id: {candidates.candidate_id} already in collection")
+
     response = await create_candidates(candidates.dict())
     if response:
         return response
@@ -55,7 +59,6 @@ async def delete_candidates(candidate_id: int):
     if response:
         return {"messages": f"Succesfully deleted candidates {candidate_id}"}
     raise HTTPException(404, f"There is no candidate with this candidate id: {candidate_id}")
-    
 
 ####################
 @app.post("/api/votes", response_model=Votes)

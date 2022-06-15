@@ -43,7 +43,6 @@ async def remove_candidates(candidate_id):
         return False
     return True
 
-
 # =======================
 # FOR VOTES
 # =======================
@@ -60,3 +59,5 @@ async def count_votes_candidate_id(candidate_id):
 async def count_total_votes():
     total_votes = await collection_votes.count_documents({})
     return total_votes
+
+

@@ -80,5 +80,8 @@ async def get_total_votes():
     response = await count_total_votes()
     if response:
         return {"total_votes": response}
-    
-    
+
+@app.get("/api/votes-result")
+async def all_votes():
+    response = await fetch_all_votes()
+    return response

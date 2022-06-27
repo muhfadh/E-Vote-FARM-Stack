@@ -60,4 +60,18 @@ async def count_total_votes():
     total_votes = await collection_votes.count_documents({})
     return total_votes
 
+async def fetch_all_votes():
+    all_votes = []
+    query = collection_votes.aggregate([
+    { 
+      "$group": { "_id": "$candidate_id", #GROUP BY your_field
+    			"count": { "$sum": 1 } }   #COUNT(*)
+    }
+    ])
+    async for document in query:
+        document["candidate_id"] = document.pop("_id")
+        document["votes_count"] = document.pop("count")
+        all_votes.append(document)
+    
+    return all_votes
 
